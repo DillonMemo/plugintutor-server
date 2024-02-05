@@ -42,48 +42,37 @@ export class ShortcutController {
       // 업로드된 파일 저장
       fs.writeFileSync(videoPath, file.buffer);
 
-      const command = ffmpeg(videoPath)
-        .on('end', () => {
-          console.log('Thumbnails generated successfully');
-          // let thumbnailStreams: fs.ReadStream[] = []
-          for (let i = 1; i <= 10; i++) {
-            const thumbnailPath = `uploads/thumbnails/thumbnail-${i}.png`;
-            fs.readFile(thumbnailPath, (error, data) => {
-              if (error) {
-                console.error(`Error reading thumbnail ${i}`, error);
-                return;
-              }
+      const thumbnailStreams = await this.shortcutService.generateThumbnail(
+        videoPath,
+      );
+      // ffmpeg(videoPath)
+      //   .on('filenames', (filenames, unknown) => {
+      //     thumbsFilePaths = filenames.map(
+      //       (name: string) => `uploads/thumbnails/${name}`,
+      //     );
+      //     console.log('Will generate', thumbsFilePaths);
+      //   })
+      //   .on('end', () => {
+      //     console.count('Thumbnails generated successfully');
+      //     return response.json({
+      //       success: true,
+      //       thumbsFilePaths,
+      //       fileDuration,
+      //     });
+      //   })
+      //   .on('error', (error) => {
+      //     console.error('Error generating thumbnails:', error);
+      //     return response.json({ success: false, error });
+      //   })
+      //   .screenshots({
+      //     count: 10,
+      //     timemarks: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], // 1초 간격으로 생성
+      //     folder: 'uploads/thumbnails',
+      //     size: '320x240',
+      //     filename: 'thumbnail-%i.png',
+      //   });
 
-              console.log('thumbnail', data);
-              // thumbnailStreams = [...thumbnailStreams, data]
-            });
-          }
-        })
-        .on('error', (error) => {
-          console.error('Error generating thumbnails:', error);
-          return response.json({ success: false, error });
-        })
-        .screenshots({
-          count: 10,
-          timemarks: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], // 1초 간격으로 생성
-          folder: 'uploads/thumbnails',
-          size: '320x240',
-          filename: 'thumbnail-%i.png',
-        });
-
-      console.log('finish');
-      // return response.json({
-      //   success: true,
-      // });
-      // // 또는 바로 응답으로 스트리밍 예시
-      // thumbnailStreams.forEach((stream) => {
-      //   console.log('thumbnail streams', stream);
-      //   stream.pipe(response, { end: false });
-      // });
-
-      // // 모든 썸네일을 전송한 후에 응답 종료
-      // response.end();
-      return file;
+      console.log('finish', thumbnailStreams);
     } catch (error) {
       console.error(error);
       response
