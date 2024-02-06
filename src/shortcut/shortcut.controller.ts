@@ -45,6 +45,7 @@ export class ShortcutController {
       const thumbnailStreams = await this.shortcutService.generateThumbnail(
         videoPath,
       );
+
       // ffmpeg(videoPath)
       //   .on('filenames', (filenames, unknown) => {
       //     thumbsFilePaths = filenames.map(
