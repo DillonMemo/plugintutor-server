@@ -5,7 +5,7 @@ import * as ffmpeg from 'fluent-ffmpeg';
 interface GenerateThumbnailOutput {
   success: boolean;
   error?: Error;
-  streams?: fs.ReadStream;
+  streams?: Buffer[];
 }
 @Injectable()
 export class ShortcutService {
@@ -15,35 +15,9 @@ export class ShortcutService {
 
   async generateThumbnail(videoPath: string): Promise<GenerateThumbnailOutput> {
     const dir = 'uploads/thumbnails';
-    const divider = 15;
+    const divider = 20;
     let readStreams = [];
     return new Promise<GenerateThumbnailOutput>((resolve, reject) => {
-      // ffmpeg(videoPath)
-      //   .on('filenames', (filenames, unknown) => {
-      //     thumbsFilePaths = filenames.map(
-      //       (name: string) => `uploads/thumbnails/${name}`,
-      //     );
-      //     console.log('Will generate', thumbsFilePaths);
-      //   })
-      //   .on('end', () => {
-      //     console.count('Thumbnails generated successfully');
-      //     return response.json({
-      //       success: true,
-      //       thumbsFilePaths,
-      //       fileDuration,
-      //     });
-      //   })
-      //   .on('error', (error) => {
-      //     console.error('Error generating thumbnails:', error);
-      //     return response.json({ success: false, error });
-      //   })
-      //   .screenshots({
-      //     count: 10,
-      //     timemarks: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], // 1초 간격으로 생성
-      //     folder: 'uploads/thumbnails',
-      //     size: '320x240',
-      //     filename: 'thumbnail-%i.png',
-      //   });
       ffmpeg.ffprobe(videoPath, (error, metadata) => {
         if (error) {
           console.error('Error getting video metadata:', error);

@@ -13,7 +13,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
 import { Response } from 'express';
 import * as path from 'path';
-import * as ffmpeg from 'fluent-ffmpeg';
 
 @Controller('shortcut')
 export class ShortcutController {
@@ -46,39 +45,12 @@ export class ShortcutController {
         videoPath,
       );
 
-      // ffmpeg(videoPath)
-      //   .on('filenames', (filenames, unknown) => {
-      //     thumbsFilePaths = filenames.map(
-      //       (name: string) => `uploads/thumbnails/${name}`,
-      //     );
-      //     console.log('Will generate', thumbsFilePaths);
-      //   })
-      //   .on('end', () => {
-      //     console.count('Thumbnails generated successfully');
-      //     return response.json({
-      //       success: true,
-      //       thumbsFilePaths,
-      //       fileDuration,
-      //     });
-      //   })
-      //   .on('error', (error) => {
-      //     console.error('Error generating thumbnails:', error);
-      //     return response.json({ success: false, error });
-      //   })
-      //   .screenshots({
-      //     count: 10,
-      //     timemarks: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], // 1초 간격으로 생성
-      //     folder: 'uploads/thumbnails',
-      //     size: '320x240',
-      //     filename: 'thumbnail-%i.png',
-      //   });
-
-      console.log('finish', thumbnailStreams);
+      return response.status(HttpStatus.OK).json(thumbnailStreams);
     } catch (error) {
       console.error(error);
       response
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send(error.message || 'Internal Server Error');
+        .json({ success: false, error });
     }
   }
 }

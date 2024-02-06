@@ -39,7 +39,7 @@ module.exports = {
     'no-console': [
       2,
       {
-        allow: ['warn', 'error', 'count', 'countReset', 'dir'],
+        allow: ['warn', 'error', 'count', 'countReset', 'dir', 'log'],
       },
     ],
     'no-useless-escape': 'off',
