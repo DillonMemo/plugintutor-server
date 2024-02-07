@@ -5,7 +5,7 @@ import * as ffmpeg from 'fluent-ffmpeg';
 interface GenerateThumbnailOutput {
   success: boolean;
   error?: Error;
-  streams?: Buffer[];
+  thumbnails?: Buffer[];
 }
 @Injectable()
 export class ShortcutService {
@@ -15,6 +15,7 @@ export class ShortcutService {
 
   async generateThumbnail(videoPath: string): Promise<GenerateThumbnailOutput> {
     const dir = 'uploads/thumbnails';
+    const mimetype = 'png';
     const divider = 20;
     let readStreams = [];
     return new Promise<GenerateThumbnailOutput>((resolve, reject) => {
@@ -32,12 +33,23 @@ export class ShortcutService {
               (readStreams = filenames.map((name) => `${dir}/${name}`));
           })
           .on('end', () => {
-            let streams = [];
-            readStreams.forEach((thumbnailPath) => {
-              streams = [...streams, fs.readFileSync(thumbnailPath)];
+            let thumbnails = [];
+            readStreams.forEach((thumbnailPath: string) => {
+              const bufferData = fs.readFileSync(thumbnailPath);
+              const fileData = {
+                fieldname: 'file',
+                originalname: thumbnailPath.replace(`${dir}/`, ''),
+                encoding: '7bit',
+                mimetype: `image/${mimetype}`,
+                buffer: bufferData,
+                size: bufferData.length,
+              };
+              thumbnails = [...thumbnails, fileData];
+
+              fs.unlinkSync(thumbnailPath);
             });
             console.log('Thumbnail generated successfully');
-            resolve({ success: true, streams });
+            resolve({ success: true, thumbnails });
           })
           .on('error', (error) => {
             console.error('Error generating thumbnail:', error);
@@ -51,7 +63,7 @@ export class ShortcutService {
             ), // 1초 간격으로 생성
             folder: dir,
             size: '320x240',
-            filename: 'thumbnail-%i.png',
+            filename: `thumbnail-%i.${mimetype}`,
           });
       });
     });
