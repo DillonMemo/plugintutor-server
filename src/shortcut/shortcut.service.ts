@@ -27,6 +27,7 @@ export class ShortcutService {
 
         const durationInSeconds = metadata.format.duration; // 총 영상 길이 (초 단위)
         const interval = durationInSeconds / divider; // 총 영상 길이 기준 간격 계산
+        console.log('time check', durationInSeconds, interval);
         ffmpeg(videoPath)
           .on('filenames', (filenames) => {
             Array.isArray(filenames) &&
@@ -43,6 +44,7 @@ export class ShortcutService {
                 mimetype: `image/${mimetype}`,
                 buffer: bufferData,
                 size: bufferData.length,
+                // 이미지 마다 영상 시간의 위치를 같이 보내줄수 있다면?
               };
               thumbnails = [...thumbnails, fileData];
 
