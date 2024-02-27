@@ -48,7 +48,7 @@ export class ShortcutController {
       fs.unlinkSync(videoPath);
       return response
         .status(HttpStatus.OK)
-        .json({ success: true, thumbnails: thumbnailStreams, video: file });
+        .json({ ...thumbnailStreams, video: file });
     } catch (error) {
       console.error(error);
       response
